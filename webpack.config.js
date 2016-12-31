@@ -1,4 +1,14 @@
 var webpack = require('webpack');
+var path = require('path');
+var envFile = require('node-env-file');
+
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
+try {
+    envFile(path.join(__dirname, 'config/' + process.env.NODE_ENV + '.env'));
+} catch(e) {
+    // Ignore. Ain't nobody got time for errors.
+}
 
 module.exports = {
     entry: [
@@ -13,6 +23,11 @@ module.exports = {
         new webpack.ProvidePlugin({
             '$': 'jquery',
             'jQuery': 'jquery'
+        }),
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+            }
         })
     ],
     output: {
@@ -21,16 +36,13 @@ module.exports = {
     },
     resolve: {
         root: __dirname,
+        modulesDirectories: [
+            'node_modules',
+            './app/components',
+            './app/api'
+        ],
         alias: {
-            Main: 'app/components/Main.jsx',
-            Nav: 'app/components/Nav.jsx',
-            Weather: 'app/components/Weather.jsx',
-            WeatherForm: 'app/components/WeatherForm.jsx',
-            WeatherMessage: 'app/components/WeatherMessage.jsx',
-            About: 'app/components/About.jsx',
-            Examples: 'app/components/Examples.jsx',
-            openWeatherMap: 'app/api/openWeatherMap.jsx',
-            ErrorModal: 'app/components/ErrorModal.jsx',
+            app: 'app',
             applicationStyles: 'app/styles/app.scss'
         },
         extensions: ['', '.js', '.jsx']
@@ -47,5 +59,10 @@ module.exports = {
             }
         ]
     },
-    devtool: 'inline-source-map'
+    sassLoader: {
+        includePaths: [
+            path.resolve(__dirname, './node_modules/foundation-sites/scss')
+        ]
+    },
+    devtool: process.env.NODE_ENV === 'production' ? undefined : 'inline-source-map'
 };

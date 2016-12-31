@@ -1,9 +1,19 @@
 var React = require('react');
 
-var WeatherMessage = ({temp, location}) => {
+export var WeatherMessage = ({temp, location, conditions, humidity, pressure, windSpeed, windDir, visibility, sunriseUTC, sunsetUTC}) => {
     return (
-        <h3 className="text-center">It is {temp} in {location}</h3>
+        <div>
+            <h4>Current weather in {location}</h4>
+            <p>Conditions: {conditions}</p>
+            <p>Temperature: {temp} &deg;F</p>
+            <p>Humidity: {humidity}%</p>
+            <p>Pressure: {pressure} &quot;Hg</p>
+            <p>Wind: {windSpeed} mph, {windDir}</p>
+            <p>Visibility: {visibility} miles</p>
+            <p>Sunrise: {sunriseUTC} UTC (TODO: convert to city local time)</p>
+            <p>Sunset: {sunsetUTC} UTC (TODO: convert to city local time)</p>
+        </div>
     )
 }
 
-module.exports = WeatherMessage;
+export default WeatherMessage;
