@@ -2,7 +2,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactDOMServer = require('react-dom/server');
 
-var ErrorModal = React.createClass({
+export var ErrorModal = React.createClass({
     getDefaultProps: function () {
         return {
             title: 'Error',
@@ -43,4 +43,4 @@ var ErrorModal = React.createClass({
     }
 });
 
-module.exports = ErrorModal;
+export default ErrorModal;

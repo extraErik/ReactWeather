@@ -3,7 +3,7 @@ var React = require('react');
 //var WeatherMessage = require('WeatherMessage');
 import WeatherForm from 'WeatherForm';
 import WeatherMessage from 'WeatherMessage';
-var ErrorModal = require('ErrorModal');
+import ErrorModal from 'ErrorModal';
 var openWeatherMap = require('openWeatherMap');
 var moment = require('moment');
 
