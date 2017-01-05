@@ -38,6 +38,11 @@ module.exports = function (config) {
                   extensions: ['', '.js', '.jsx']
               },
               module: {
+                preLoaders: [
+                    {
+                        test: /\.jsx?$/, loader: "eslint-loader", exclude: /(node_modules|bower_components)/
+                    }
+                ],
                 loaders: [
                   {
                       loader: 'babel-loader',

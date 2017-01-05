@@ -1,3 +1,4 @@
+/* global require describe it */
 var expect = require('expect');
 
 describe('App', () => {

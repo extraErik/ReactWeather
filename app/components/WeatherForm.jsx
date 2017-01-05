@@ -1,3 +1,4 @@
+/* global require */
 var React = require('react');
 
 export var WeatherForm = React.createClass({

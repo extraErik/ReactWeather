@@ -10,3 +10,11 @@ $title-color: #555;
 input[type=search] {
     box-shadow: none;
 }
+
+.current-weather.callout, .forecast-weather.callout {
+    margin-top: 2.5rem;
+
+    p {
+        margin-bottom: 0.1rem;
+    }
+}

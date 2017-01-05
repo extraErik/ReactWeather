@@ -1,3 +1,4 @@
+/* global require describe it xit setTimeout */
 var React = require('react');
 var ReactDOM = require('react-dom');
 //var {Provider} = require('react-redux');
@@ -9,7 +10,7 @@ var TestUtils = require('react-addons-test-utils');
 import {Weather} from 'Weather';
 //var Weather = require('Weather');
 import {WeatherForm} from 'WeatherForm';
-import {WeatherMessage} from 'WeatherMessage';
+import {WeatherCurrent} from 'WeatherCurrent';
 import {ErrorModal} from 'ErrorModal';
 
 
@@ -40,7 +41,7 @@ describe('Weather', () => {
             { deg: -1, dir: undefined }, { deg: 361, dir: undefined }
         ];
 
-        var windDeg, windDir;
+        var windDir;
         var dummyLocation = {'query': {}};
 
         var weather = TestUtils.renderIntoDocument(<Weather location={dummyLocation}/>);
@@ -48,7 +49,7 @@ describe('Weather', () => {
         for (let test of windTestData) {
             windDir = weather.getWindDirection(test.deg);
             expect(windDir).toEqual(test.dir);
-        };
+        }
 
     });
 
@@ -61,25 +62,34 @@ describe('Weather', () => {
         expect(weatherForm).toExist();
     });
 
-    it('should display a WeatherMessage component if handleSearch makes successful rest call', () => {
+    it('should display a WeatherCurrent component if handleSearch makes successful rest call', () => {
         var dummyLocation = {'query': {}};
         var myCity = 'Frisco, TX';
 
         var weather = TestUtils.renderIntoDocument(<Weather location={dummyLocation}/>);
 
         var spy = expect.spyOn(weather, 'handleSearch').andCall(function (location) {
+
             weather.setState({
+                // fake current data
+                isLoadingCurrent: false,
                 location: location,
-                temp: 59.34,
-                conditions: 'Clear',
-                humidity: 82,
-                pressure: '29.85',
-                windSpeed: 11.41,
-                windDir: 'W',
-                visibility: '10.0',
-                sunriseUTC: '1:31 pm',
-                sunsetUTC: '11:32 pm',
-                isLoading: false
+                current: {
+                    temp: 59.34,
+                    conditions: 'Clear',
+                    humidity: 82,
+                    pressure: '29.85',
+                    windSpeed: 11.41,
+                    windDir: 'W',
+                    visibility: '10.0',
+                    sunriseUTC: '1:31 pm',
+                    sunsetUTC: '11:32 pm'
+                },
+                // fake the forecast data
+                isLoadingForecast: false,
+                forecast: {
+                    count: 3
+                }
             });
         });
 
@@ -87,23 +97,26 @@ describe('Weather', () => {
 
         expect(spy).toHaveBeenCalledWith(myCity);
 
-        var weatherMessage = TestUtils.findRenderedComponentWithType(weather, WeatherMessage);
-        expect(weatherMessage).toExist();
+        var weatherCurrent = TestUtils.findRenderedComponentWithType(weather, WeatherCurrent);
+        expect(weatherCurrent).toExist();
 
         var errorModals = TestUtils.scryRenderedComponentsWithType(weather, ErrorModal);
         expect(errorModals.length).toEqual(0);
     });
 
+    // TODO: this should check for errors on BOTH rest calls...
     it('should display an ErrorModal component if handleSearch makes failed rest call', () => {
         var dummyLocation = {'query': {}};
         var myCity = 'yabbadabbadoo';
 
         var weather = TestUtils.renderIntoDocument(<Weather location={dummyLocation}/>);
 
-        var spy = expect.spyOn(weather, 'handleSearch').andCall(function (location) {
+        var spy = expect.spyOn(weather, 'handleSearch').andCall(function () {
             weather.setState({
-                errorMessage: 'nope',
-                isLoading: false
+                errorCurrent: 'nope',
+                errorForecast: 'nope',
+                isLoadingCurrent: false,
+                isLoadingForecast: false
             });
         });
 
@@ -111,15 +124,14 @@ describe('Weather', () => {
 
         expect(spy).toHaveBeenCalledWith(myCity);
 
-        var weatherMessages = TestUtils.scryRenderedComponentsWithType(weather, WeatherMessage);
-        expect(weatherMessages.length).toEqual(0);
+        var weatherCurrents = TestUtils.scryRenderedComponentsWithType(weather, WeatherCurrent);
+        expect(weatherCurrents.length).toEqual(0);
 
         var errorModal = TestUtils.findRenderedComponentWithType(weather, ErrorModal);
         expect(errorModal).toExist();
     });
 
-
-    it('should display a busy message while waiting for rest call to return', (done) => {
+    it('should display a busy message while waiting for getCurrent rest call to return', (done) => {
         var dummyLocation = {'query': {}};
         var myCity = 'yabbadabbadoo';
 
@@ -127,26 +139,26 @@ describe('Weather', () => {
 
         var $el = $(ReactDOM.findDOMNode(weather));
         var weatherComponentText = $el.text();
-        expect(weatherComponentText).toExclude('Fetching weather...');
+        expect(weatherComponentText).toExclude('Fetching current weather...');
 
-        var spy = expect.spyOn(weather, 'handleSearch').andCall(function (location) {
+        var spy = expect.spyOn(weather, 'handleSearch').andCall(function () {
 
             weather.setState({
-                isLoading: true
+                isLoadingCurrent: true
             });
 
             var weatherComponentText = $el.text();
-            expect(weatherComponentText).toInclude('Fetching weather...');
+            expect(weatherComponentText).toInclude('Fetching current weather...');
 
             setTimeout(function() {
 
                 weather.setState({
                     errorMessage: 'nope',
-                    isLoading: false
+                    isLoadingCurrent: false
                 });
 
                 var weatherComponentText = $el.text();
-                expect(weatherComponentText).toExclude('Fetching weather...');
+                expect(weatherComponentText).toExclude('Fetching current weather...');
 
                 done();
 
@@ -158,6 +170,10 @@ describe('Weather', () => {
 
         expect(spy).toHaveBeenCalledWith(myCity);
 
+    });
+
+    //TODO: this might go away if you chain promises and have just one busy message for both calls...
+    xit('should display a busy message while waiting for getForecast rest call to return', () => {
     });
 
 });

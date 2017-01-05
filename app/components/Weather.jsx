@@ -1,8 +1,10 @@
+/* global require window */
 var React = require('react');
 //var WeatherForm = require('WeatherForm');
-//var WeatherMessage = require('WeatherMessage');
+//var WeatherCurrent = require('WeatherCurrent');
 import WeatherForm from 'WeatherForm';
-import WeatherMessage from 'WeatherMessage';
+import WeatherCurrent from 'WeatherCurrent';
+import WeatherForecast from 'WeatherForecast';
 import ErrorModal from 'ErrorModal';
 var openWeatherMap = require('openWeatherMap');
 var moment = require('moment');
@@ -10,7 +12,8 @@ var moment = require('moment');
 export var Weather = React.createClass({
     getInitialState: function () {
         return {
-            isLoading: false
+            isLoadingCurrent: false,
+            isLoadingForecast: false
         }
     },
     getWindDirection: function(deg) {
@@ -56,45 +59,67 @@ export var Weather = React.createClass({
         var that = this;
 
         this.setState({
-            isLoading: true,
-            errorMessage: undefined,
+            isLoadingCurrent: true,
+            isLoadingForecast: true,
             location: undefined,
-            temp: undefined,
-            conditions: undefined,
-            humidity: undefined,
-            pressure: undefined,
-            windSpeed: undefined,
-            windDeg: undefined,
-            visibility: undefined,
-            sunriseUTC: undefined,
-            sunsetUTC: undefined
+            current: {
+                temp: undefined,
+                conditions: undefined,
+                humidity: undefined,
+                pressure: undefined,
+                windSpeed: undefined,
+                windDeg: undefined,
+                visibility: undefined,
+                sunriseUTC: undefined,
+                sunsetUTC: undefined
+            },
+            errorCurrent: undefined,
+            errorForecast: undefined
         });
 
-        openWeatherMap.getTemp(location).then(function (data) {
+        openWeatherMap.getCurrent(location).then(function (data) {
 
             var windDirection = that.getWindDirection(data.wind.deg);
 
             that.setState({
+                isLoadingCurrent: false,
                 location: location,
-                temp: data.main.temp,
-                conditions: data.weather.map(function(item){
-                                return item.main;
-                            }).join(),
-                humidity: data.main.humidity,
-                pressure: (data.main.pressure * 100 * 0.000295299830714).toFixed(2), // convert hPa to inches of Mercury
-                windSpeed: data.wind.speed,
-                windDir: windDirection,
-                visibility: (data.visibility / 1609.344).toFixed(1),
-                sunriseUTC: moment.utc(data.sys.sunrise * 1000).format('h:mm a'),
-                sunsetUTC: moment.utc(data.sys.sunset * 1000).format('h:mm a'),
-                isLoading: false
+                current: {
+                    temp: data.main.temp,
+                    conditions: data.weather.map(function(item){
+                                    return item.main;
+                                }).join(),
+                    humidity: data.main.humidity,
+                    pressure: (data.main.pressure * 100 * 0.000295299830714).toFixed(2), // convert hPa to inches of Mercury
+                    windSpeed: data.wind.speed,
+                    windDir: windDirection,
+                    visibility: (data.visibility / 1609.344).toFixed(1),
+                    sunriseUTC: moment.utc(data.sys.sunrise * 1000).format('h:mm a'),
+                    sunsetUTC: moment.utc(data.sys.sunset * 1000).format('h:mm a')
+                }
             });
         }, function (e) {
             that.setState({
-                isLoading: false,
-                errorMessage: e.message
+                isLoadingCurrent: false,
+                errorCurrent: e.message
             });
         });
+
+        openWeatherMap.getForecast(location).then(function (data) {
+            that.setState({
+                location: location,
+                isLoadingForecast: false,
+                forecast: {
+                    count: data.cnt
+                }
+            });
+        }, function (e) {
+            that.setState({
+                isLoadingForecast: false,
+                errorForecast: e.message
+            });
+        });
+
     },
     componentDidMount: function () {
         var location = this.props.location.query.location;
@@ -113,20 +138,32 @@ export var Weather = React.createClass({
         }
     },
     render: function () {
-        var {isLoading, temp, location, conditions, humidity, pressure, windSpeed, windDir, visibility, sunriseUTC, sunsetUTC, errorMessage} = this.state;
+        var {isLoadingCurrent, isLoadingForecast, location, current, forecast, errorCurrent, errorForecast} = this.state;
 
-        function renderMessage () {
-            if (isLoading) {
-                return <h3>Fetching weather...</h3>;
-            } else if (temp && location) {
-                return <WeatherMessage location={location} temp={temp} conditions={conditions} humidity={humidity} pressure={pressure} windSpeed={windSpeed} windDir={windDir} visibility={visibility} sunriseUTC={sunriseUTC} sunsetUTC={sunsetUTC}/>;
+        function renderCurrentWeather () {
+            if (isLoadingCurrent) {
+                return <h3>Fetching current weather...</h3>;
+            } else if (location && current.temp) {
+                return <WeatherCurrent location={location} current={current}/>;
+            }
+        }
+
+        function renderForecastWeather () {
+            if (isLoadingForecast) {
+                return <h3>Fetching forecast weather...</h3>;
+            } else if (location && forecast.count) {
+                return <WeatherForecast location={location} forecast={forecast}/>;
             }
         }
 
         function renderError () {
-            if (typeof errorMessage === 'string') {
+            if (typeof errorCurrent === 'string') {
                 return (
-                    <ErrorModal message={errorMessage}/>
+                    <ErrorModal message={errorCurrent}/>
+                )
+            } else if (typeof errorForecast === 'string') {
+                return (
+                    <ErrorModal message={errorForecast}/>
                 )
             }
         }
@@ -135,7 +172,8 @@ export var Weather = React.createClass({
             <div>
                 <h1 className="text-center page-title">Get Weather</h1>
                 <WeatherForm onSearch={this.handleSearch}/>
-                {renderMessage()}
+                {renderCurrentWeather()}
+                {renderForecastWeather()}
                 {renderError()}
             </div>
         )
