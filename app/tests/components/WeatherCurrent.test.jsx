@@ -1,6 +1,6 @@
 /* global require describe it */
 var React = require('react');
-var ReactDOM = require('react-dom');
+//var ReactDOM = require('react-dom');
 //var {Provider} = require('react-redux');
 var expect = require('expect');
 var $ = require('jQuery');
@@ -29,7 +29,8 @@ describe('WeatherCurrent', () => {
         };
 
         var weatherCurrent = TestUtils.renderIntoDocument(<WeatherCurrent location={location} current={current} />);
-        var $el = $(ReactDOM.findDOMNode(weatherCurrent));
+        //var $el = $(ReactDOM.findDOMNode(weatherCurrent));
+        var $el = $(weatherCurrent.node);
         var actualCurrentWeatherText = $el.text();
 
         expect(actualCurrentWeatherText).toInclude('Current weather in ' + location);

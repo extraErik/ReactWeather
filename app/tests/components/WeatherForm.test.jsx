@@ -1,6 +1,6 @@
 /* global require describe it */
 var React = require('react');
-var ReactDOM = require('react-dom');
+//var ReactDOM = require('react-dom');
 //var {Provider} = require('react-redux');
 var expect = require('expect');
 var $ = require('jQuery');
@@ -19,7 +19,8 @@ describe('WeatherForm', () => {
 
         var spy = expect.createSpy();
         var weatherForm = TestUtils.renderIntoDocument(<WeatherForm onSearch={spy}/>);
-        var $el = $(ReactDOM.findDOMNode(weatherForm));
+        //var $el = $(ReactDOM.findDOMNode(weatherForm));
+        var $el = $(weatherForm.node);
 
         weatherForm.refs.location.value = searchText;
         TestUtils.Simulate.submit($el.find('form')[0]);
@@ -32,7 +33,8 @@ describe('WeatherForm', () => {
 
         var spy = expect.createSpy();
         var weatherForm = TestUtils.renderIntoDocument(<WeatherForm onSearch={spy}/>);
-        var $el = $(ReactDOM.findDOMNode(weatherForm));
+        //var $el = $(ReactDOM.findDOMNode(weatherForm));
+        var $el = $(weatherForm.node);
 
         weatherForm.refs.location.value = searchText;
         TestUtils.Simulate.submit($el.find('form')[0]);

@@ -1,6 +1,6 @@
 /* global require describe it xit setTimeout */
 var React = require('react');
-var ReactDOM = require('react-dom');
+//var ReactDOM = require('react-dom');
 //var {Provider} = require('react-redux');
 var expect = require('expect');
 var $ = require('jQuery');
@@ -75,6 +75,7 @@ describe('Weather', () => {
                 isLoadingCurrent: false,
                 location: location,
                 current: {
+                    dt: 123467,
                     temp: 59.34,
                     conditions: 'Clear',
                     humidity: 82,
@@ -87,9 +88,26 @@ describe('Weather', () => {
                 },
                 // fake the forecast data
                 isLoadingForecast: false,
-                forecast: {
-                    count: 3
-                }
+                forecast: [
+                    {
+                        id: 1,
+                        dt: 123412,
+                        conditions: 'Stuff, Other Stuff',
+                        temp: {
+                            max: 3,
+                            min: 2
+                        }
+                    },
+                    {
+                        id: 1,
+                        dt: 123415,
+                        conditions: 'Stuff, More Stuff',
+                        temp: {
+                            max: 23,
+                            min: 12
+                        }
+                    }
+                ]
             });
         });
 
@@ -137,7 +155,7 @@ describe('Weather', () => {
 
         var weather = TestUtils.renderIntoDocument(<Weather location={dummyLocation}/>);
 
-        var $el = $(ReactDOM.findDOMNode(weather));
+        var $el = $(weather.node);
         var weatherComponentText = $el.text();
         expect(weatherComponentText).toExclude('Fetching current weather...');
 

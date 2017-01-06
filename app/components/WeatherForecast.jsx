@@ -2,6 +2,9 @@
 var React = require('react');
 
 export var WeatherForecast = React.createClass({
+    propTypes: {
+        dayData: React.PropTypes.object.isRequired,
+    },
     render: function () {
         var {dayData} = this.props;
         var dt = dayData.dt;

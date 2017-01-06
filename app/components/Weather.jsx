@@ -5,12 +5,14 @@ var React = require('react');
 import WeatherForm from 'WeatherForm';
 import WeatherCurrent from 'WeatherCurrent';
 import WeatherForecastList from 'WeatherForecastList';
-import WeatherForecast from 'WeatherForecast';
 import ErrorModal from 'ErrorModal';
 var openWeatherMap = require('openWeatherMap');
 var moment = require('moment');
 
 export var Weather = React.createClass({
+    propTypes: {
+        location: React.PropTypes.object.isRequired
+    },
     getInitialState: function () {
         return {
             isLoadingCurrent: false,
@@ -150,7 +152,7 @@ export var Weather = React.createClass({
     },
     render: function () {
         var {isLoadingCurrent, isLoadingForecast, location, current, forecast, errorCurrent, errorForecast} = this.state;
-        var that = this;
+        //var that = this;
 
         function renderCurrentWeather () {
             if (isLoadingCurrent) {
@@ -161,7 +163,7 @@ export var Weather = React.createClass({
         }
 
         function renderForecastWeather () {
-            var {forecast} = that.state;
+            //var {forecast} = that.state;
 
             if (isLoadingForecast) {
                 return <h3>Fetching forecast weather...</h3>;
@@ -183,7 +185,7 @@ export var Weather = React.createClass({
         }
 
         return (
-            <div>
+            <div ref={node => this.node = node}>
                 <h1 className="text-center page-title">Get Weather</h1>
                 <WeatherForm onSearch={this.handleSearch}/>
                 {renderCurrentWeather()}

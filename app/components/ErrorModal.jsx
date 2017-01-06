@@ -1,6 +1,6 @@
 /* global require $ Foundation */
 var React = require('react');
-var ReactDOM = require('react-dom');
+//var ReactDOM = require('react-dom');
 var ReactDOMServer = require('react-dom/server');
 
 export var ErrorModal = React.createClass({
@@ -30,7 +30,7 @@ export var ErrorModal = React.createClass({
         );
 
         var $modal = $(ReactDOMServer.renderToString(modalMarkup));
-        $(ReactDOM.findDOMNode(this)).html($modal)
+        $(this.node).html($modal);
 
         var modal = new Foundation.Reveal($('#error-modal'));
         modal.open();
@@ -38,7 +38,7 @@ export var ErrorModal = React.createClass({
     render: function () {
 
         return (
-            <div>
+            <div ref={node => this.node = node}>
             </div>
         )
     }
