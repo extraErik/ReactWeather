@@ -3,13 +3,17 @@ var React = require('react');
 
 export var WeatherForecast = React.createClass({
     render: function () {
-        var {location, forecast} = this.props;
-        var count = forecast.count;
+        var {dayData} = this.props;
+        var dt = dayData.dt;
+        var conditions = dayData.conditions;
+        var {max, min} = dayData.temp;
 
         return (
             <div className="forecast-weather callout">
-                <h4>Forecast data for a future date will go here</h4>
-                <h4>Soon a List component will display data for {count} days</h4>
+                <p>Date: {dt}</p>
+                <p>Conditions: {conditions}</p>
+                <p>High: {max} &deg;F</p>
+                <p>Low: {min} &deg;F</p>
             </div>
         )
     }

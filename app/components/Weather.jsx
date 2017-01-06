@@ -4,6 +4,7 @@ var React = require('react');
 //var WeatherCurrent = require('WeatherCurrent');
 import WeatherForm from 'WeatherForm';
 import WeatherCurrent from 'WeatherCurrent';
+import WeatherForecastList from 'WeatherForecastList';
 import WeatherForecast from 'WeatherForecast';
 import ErrorModal from 'ErrorModal';
 var openWeatherMap = require('openWeatherMap');
@@ -63,6 +64,7 @@ export var Weather = React.createClass({
             isLoadingForecast: true,
             location: undefined,
             current: {
+                dt: undefined,
                 temp: undefined,
                 conditions: undefined,
                 humidity: undefined,
@@ -85,10 +87,11 @@ export var Weather = React.createClass({
                 isLoadingCurrent: false,
                 location: location,
                 current: {
-                    temp: data.main.temp,
+                    dt: moment.utc(data.dt * 1000).format('dddd, M/D/YYYY'),
+                    temp: data.main.temp.toFixed(1),
                     conditions: data.weather.map(function(item){
                                     return item.main;
-                                }).join(),
+                                }).join(', '),
                     humidity: data.main.humidity,
                     pressure: (data.main.pressure * 100 * 0.000295299830714).toFixed(2), // convert hPa to inches of Mercury
                     windSpeed: data.wind.speed,
@@ -109,9 +112,17 @@ export var Weather = React.createClass({
             that.setState({
                 location: location,
                 isLoadingForecast: false,
-                forecast: {
-                    count: data.cnt
-                }
+                forecast: data.list.map(function(item, index){
+                   var processedItem = { dt: undefined, temp: {max: undefined, min: undefined }};
+                   processedItem.id = index;
+                   processedItem.dt = moment.utc(item.dt * 1000).format('dddd, M/D/YYYY'),
+                   processedItem.conditions = item.weather.map(function(item){
+                                   return item.main;
+                               }).join(', '),
+                   processedItem.temp.max = item.temp.max.toFixed(1);
+                   processedItem.temp.min = item.temp.min.toFixed(1);
+                   return processedItem
+                })
             });
         }, function (e) {
             that.setState({
@@ -139,6 +150,7 @@ export var Weather = React.createClass({
     },
     render: function () {
         var {isLoadingCurrent, isLoadingForecast, location, current, forecast, errorCurrent, errorForecast} = this.state;
+        var that = this;
 
         function renderCurrentWeather () {
             if (isLoadingCurrent) {
@@ -149,10 +161,12 @@ export var Weather = React.createClass({
         }
 
         function renderForecastWeather () {
+            var {forecast} = that.state;
+
             if (isLoadingForecast) {
                 return <h3>Fetching forecast weather...</h3>;
-            } else if (location && forecast.count) {
-                return <WeatherForecast location={location} forecast={forecast}/>;
+            } else if (location && forecast) {
+                return <WeatherForecastList location={location} forecast={forecast}/>;
             }
         }
 

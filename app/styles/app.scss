@@ -11,10 +11,14 @@ input[type=search] {
     box-shadow: none;
 }
 
-.current-weather.callout, .forecast-weather.callout {
-    margin-top: 2.5rem;
+.callout p {
+    margin-bottom: 0.1rem;
+}
 
-    p {
-        margin-bottom: 0.1rem;
-    }
+.current-weather.callout, .forecast-weather-list.callout {
+    margin-top: 2.5rem;
+}
+
+.forecast-weather.callout {
+    margin-top: 1rem;
 }
