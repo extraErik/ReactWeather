@@ -157,7 +157,7 @@ describe('Weather', () => {
 
         var $el = $(weather.node);
         var weatherComponentText = $el.text();
-        expect(weatherComponentText).toExclude('Fetching current weather...');
+        expect(weatherComponentText).toExclude('Fetching weather...');
 
         var spy = expect.spyOn(weather, 'handleSearch').andCall(function () {
 
@@ -166,7 +166,7 @@ describe('Weather', () => {
             });
 
             var weatherComponentText = $el.text();
-            expect(weatherComponentText).toInclude('Fetching current weather...');
+            expect(weatherComponentText).toInclude('Fetching weather...');
 
             setTimeout(function() {
 
@@ -176,7 +176,7 @@ describe('Weather', () => {
                 });
 
                 var weatherComponentText = $el.text();
-                expect(weatherComponentText).toExclude('Fetching current weather...');
+                expect(weatherComponentText).toExclude('Fetching weather...');
 
                 done();
 

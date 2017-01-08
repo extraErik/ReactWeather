@@ -5,7 +5,7 @@ import WeatherForecast from 'WeatherForecast';
 export var WeatherForecastList = React.createClass({
     propTypes: {
         location: React.PropTypes.string.isRequired,
-        forecast: React.PropTypes.object.isRequired
+        forecast: React.PropTypes.array.isRequired
     },
     render: function () {
         var {location, forecast} = this.props;

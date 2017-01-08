@@ -154,32 +154,28 @@ export var Weather = React.createClass({
         var {isLoadingCurrent, isLoadingForecast, location, current, forecast, errorCurrent, errorForecast} = this.state;
         //var that = this;
 
+        function renderSpinner () {
+            if (isLoadingCurrent || isLoadingForecast) {
+                return <h3>Fetching weather...</h3>
+            }
+        }
+
         function renderCurrentWeather () {
-            if (isLoadingCurrent) {
-                return <h3>Fetching current weather...</h3>;
-            } else if (location && current.temp) {
+            if (location && current.temp) {
                 return <WeatherCurrent location={location} current={current}/>;
             }
         }
 
         function renderForecastWeather () {
-            //var {forecast} = that.state;
-
-            if (isLoadingForecast) {
-                return <h3>Fetching forecast weather...</h3>;
-            } else if (location && forecast) {
+            if (location && forecast) {
                 return <WeatherForecastList location={location} forecast={forecast}/>;
             }
         }
 
         function renderError () {
-            if (typeof errorCurrent === 'string') {
+            if (isLoadingCurrent === false && isLoadingForecast === false && (typeof errorCurrent === 'string' || typeof errorForecast === 'string')) {
                 return (
-                    <ErrorModal message={errorCurrent}/>
-                )
-            } else if (typeof errorForecast === 'string') {
-                return (
-                    <ErrorModal message={errorForecast}/>
+                    <ErrorModal errorCurrent={errorCurrent} errorForecast={errorForecast} />
                 )
             }
         }
@@ -188,6 +184,7 @@ export var Weather = React.createClass({
             <div ref={node => this.node = node}>
                 <h1 className="text-center page-title">Get Weather</h1>
                 <WeatherForm onSearch={this.handleSearch}/>
+                {renderSpinner()}
                 {renderCurrentWeather()}
                 {renderForecastWeather()}
                 {renderError()}
