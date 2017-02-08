@@ -12,17 +12,17 @@ export var ErrorModal = React.createClass({
     },
     propTypes: {
         title: React.PropTypes.string,
-        errorCurrent: React.PropTypes.string,
-        errorForecast: React.PropTypes.string,
+        errorGeo: React.PropTypes.string,
+        errorDarkSky: React.PropTypes.string,
         buttonText: React.PropTypes.string
     },
     componentDidMount: function () {
-        var {title, errorCurrent, errorForecast, buttonText} = this.props;
+        var {title, errorGeo, errorDarkSky, buttonText} = this.props;
         var modalMarkup = (
             <div id="error-modal" className="reveal tiny text-center" data-reveal="">
                 <h4>{title}</h4>
-                <p>Error getting current weather data: {errorCurrent}</p>
-                <p>Error getting forecast weather data: {errorForecast}</p>
+                <p>Error getting location data: {errorGeo}</p>
+                <p>Error getting weather data: {errorDarkSky}</p>
                 <p>
                     <button className="button hollow" data-close="">
                         {buttonText}

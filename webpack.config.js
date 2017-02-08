@@ -2,6 +2,7 @@ var webpack = require('webpack');
 var path = require('path');
 var envFile = require('node-env-file');
 
+process.env.PORT = process.env.PORT || 3000;
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 try {
@@ -27,7 +28,8 @@ module.exports = {
         new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-                WEATHER_API_KEY: JSON.stringify(process.env.WEATHER_API_KEY)
+                PORT: JSON.stringify(process.env.PORT),
+                DARKSKY_API_KEY: JSON.stringify(process.env.DARKSKY_API_KEY)
             }
         }),
     ],
@@ -57,7 +59,13 @@ module.exports = {
                 },
                 test: /\.jsx?$/,
                 exclude: /(node_modules|bower_components)/
+            },
+            {
+                loader: 'json-loader',
+                test: /\.json$/
             }
+
+
         ]
     },
     sassLoader: {

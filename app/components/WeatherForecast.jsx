@@ -7,14 +7,18 @@ export var WeatherForecast = React.createClass({
     },
     render: function () {
         var {dayData} = this.props;
-        var dt = dayData.dt;
-        var conditions = dayData.conditions;
+        var {dt, conditions, iconVal} = dayData;
         var {max, min} = dayData.temp;
 
+        var iconSrc = `/svg/${iconVal}.svg`;
+
         return (
-            <div className="forecast-weather callout">
-                <p>Date: {dt}</p>
-                <p>Conditions: {conditions}</p>
+            <div className="forecast-weather callout clearfix">
+                <div className="condImg float-right">
+                    <img className="forecast-weather-icon" src={iconSrc} />
+                </div>
+                <p>{dt}</p>
+                <p>{conditions}</p>
                 <p>High: {max} &deg;F</p>
                 <p>Low: {min} &deg;F</p>
             </div>

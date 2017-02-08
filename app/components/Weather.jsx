@@ -1,13 +1,16 @@
 /* global require window */
 var React = require('react');
-//var WeatherForm = require('WeatherForm');
-//var WeatherCurrent = require('WeatherCurrent');
+
 import WeatherForm from 'WeatherForm';
 import WeatherCurrent from 'WeatherCurrent';
 import WeatherForecastList from 'WeatherForecastList';
 import ErrorModal from 'ErrorModal';
+
+var geocode = require('geocode');
+var darkSky = require('darkSky');
 var openWeatherMap = require('openWeatherMap');
-var moment = require('moment');
+
+var moment = require('moment-timezone');
 
 export var Weather = React.createClass({
     propTypes: {
@@ -18,6 +21,30 @@ export var Weather = React.createClass({
             isLoadingCurrent: false,
             isLoadingForecast: false
         }
+    },
+    getIconFilename: function (apiName, forecastFlag) {
+
+        // Per the DarkSky API FAQ, can treat partly-cloudy-night as aliast for 'clear-day'
+        // due to some confusing logic that they plan to change. My reading indicates this
+        // really only applies to forecast days, not current conditions, hence the flag here.
+        if (forecastFlag === true && apiName === 'partly-cloudy-night') {
+            apiName = 'clear-day';
+        }
+
+        var iconFilenameMap = {
+            'clear-day': 'Sun',
+            'clear-night': 'Sun',
+            'rain': 'Cloud-Rain',
+            'snow': 'Cloud-Snow-Alt',
+            'sleet': 'Cloud-Hail-Alt',
+            'wind': 'Wind',
+            'fog': 'Cloud-Fog',
+            'cloudy': 'Cloud',
+            'partly-cloudy-day': 'Cloud-Sun',
+            'partly-cloudy-night': 'Cloud-Moon'
+        };
+
+        return iconFilenameMap[apiName];
     },
     getWindDirection: function(deg) {
         // Return direction of wind given degrees, according to info found
@@ -62,13 +89,13 @@ export var Weather = React.createClass({
         var that = this;
 
         this.setState({
-            isLoadingCurrent: true,
-            isLoadingForecast: true,
+            isLoadingWeather: true,
             location: undefined,
-            current: {
+            darkSkyCurrent: {
                 dt: undefined,
                 temp: undefined,
                 conditions: undefined,
+                iconClass: undefined,
                 humidity: undefined,
                 pressure: undefined,
                 windSpeed: undefined,
@@ -77,62 +104,60 @@ export var Weather = React.createClass({
                 sunriseUTC: undefined,
                 sunsetUTC: undefined
             },
-            errorCurrent: undefined,
-            errorForecast: undefined
+            errorGeo: undefined,
+            errorDarkSky: undefined,
         });
 
-        openWeatherMap.getCurrent(location).then(function (data) {
-
-            var windDirection = that.getWindDirection(data.wind.deg);
+        geocode.getData(location).then(function (httpData) {
+            var lat = httpData.data.results[0].geometry.location.lat,
+                lng = httpData.data.results[0].geometry.location.lng;
 
             that.setState({
-                isLoadingCurrent: false,
-                location: location,
-                current: {
-                    dt: moment.utc(data.dt * 1000).format('dddd, M/D/YYYY'),
-                    temp: data.main.temp.toFixed(1),
-                    conditions: data.weather.map(function(item){
-                                    return item.main;
-                                }).join(', '),
-                    humidity: data.main.humidity,
-                    pressure: (data.main.pressure * 100 * 0.000295299830714).toFixed(2), // convert hPa to inches of Mercury
-                    windSpeed: data.wind.speed,
-                    windDir: windDirection,
-                    visibility: (data.visibility / 1609.344).toFixed(1),
-                    sunriseUTC: moment.utc(data.sys.sunrise * 1000).format('h:mm a'),
-                    sunsetUTC: moment.utc(data.sys.sunset * 1000).format('h:mm a')
-                }
+                location
             });
+
+            darkSky.getData(lat, lng).then(function (httpData) {
+
+                that.setState({
+                    isLoadingWeather: false,
+                    darkSkyCurrent: {
+                        dt: moment.utc(httpData.data.currently.time * 1000).format('ddd, M/D'),
+                        temp: httpData.data.currently.temperature.toFixed(0),
+                        conditions: httpData.data.currently.summary,
+                        iconVal: that.getIconFilename(httpData.data.currently.icon),
+                        humidity: (httpData.data.currently.humidity * 100).toFixed(0),
+                        pressure: (httpData.data.currently.pressure * 100 * 0.000295299830714).toFixed(2), // convert hPa to inches of Mercury
+                        windSpeed: httpData.data.currently.windSpeed.toFixed(1),
+                        windDir: that.getWindDirection(httpData.data.currently.windBearing),
+                        visibility: httpData.data.currently.visibility,
+                        sunriseUTC: moment.utc(httpData.data.daily.data[0].sunriseTime * 1000).tz(httpData.data.timezone).format('h:mm a z'),
+                        sunsetUTC: moment.utc(httpData.data.daily.data[0].sunsetTime * 1000).tz(httpData.data.timezone).format('h:mm a z')
+                    },
+                    darkSkyForecast: httpData.data.daily.data.map(function(item, index){
+                        var processedItem = { dt: undefined, temp: {max: undefined, min: undefined }};
+                        processedItem.id = index;
+                        processedItem.dt = moment.utc(item.time * 1000).format('ddd, M/D'),
+                        processedItem.conditions = item.summary,
+                        processedItem.iconVal = that.getIconFilename(item.icon, true),
+                        processedItem.temp.max = item.temperatureMax.toFixed(0);
+                        processedItem.temp.min = item.temperatureMin.toFixed(0);
+                        return processedItem
+                    })
+                });
+
+            }, function (e) {
+                that.setState({
+                    isLoadingWeather: false,
+                    errorDarkSky: e.message
+                });
+            });
+
         }, function (e) {
             that.setState({
-                isLoadingCurrent: false,
-                errorCurrent: e.message
+                isLoadingWeather: false,
+                errorGeo: e.message
             });
         });
-
-        openWeatherMap.getForecast(location).then(function (data) {
-            that.setState({
-                location: location,
-                isLoadingForecast: false,
-                forecast: data.list.map(function(item, index){
-                   var processedItem = { dt: undefined, temp: {max: undefined, min: undefined }};
-                   processedItem.id = index;
-                   processedItem.dt = moment.utc(item.dt * 1000).format('dddd, M/D/YYYY'),
-                   processedItem.conditions = item.weather.map(function(item){
-                                   return item.main;
-                               }).join(', '),
-                   processedItem.temp.max = item.temp.max.toFixed(1);
-                   processedItem.temp.min = item.temp.min.toFixed(1);
-                   return processedItem
-                })
-            });
-        }, function (e) {
-            that.setState({
-                isLoadingForecast: false,
-                errorForecast: e.message
-            });
-        });
-
     },
     componentDidMount: function () {
         var location = this.props.location.query.location;
@@ -151,31 +176,30 @@ export var Weather = React.createClass({
         }
     },
     render: function () {
-        var {isLoadingCurrent, isLoadingForecast, location, current, forecast, errorCurrent, errorForecast} = this.state;
-        //var that = this;
+        var {isLoadingWeather, location, darkSkyCurrent, darkSkyForecast, errorGeo, errorDarkSky} = this.state;
 
         function renderSpinner () {
-            if (isLoadingCurrent || isLoadingForecast) {
+            if (isLoadingWeather) {
                 return <h3>Fetching weather...</h3>
             }
         }
 
         function renderCurrentWeather () {
-            if (location && current.temp) {
-                return <WeatherCurrent location={location} current={current}/>;
+            if (location && darkSkyCurrent) {
+                return <WeatherCurrent location={location} current={darkSkyCurrent}/>;
             }
         }
 
         function renderForecastWeather () {
-            if (location && forecast) {
-                return <WeatherForecastList location={location} forecast={forecast}/>;
+            if (location && darkSkyForecast) {
+                return <WeatherForecastList location={location} forecast={darkSkyForecast}/>;
             }
         }
 
         function renderError () {
-            if (isLoadingCurrent === false && isLoadingForecast === false && (typeof errorCurrent === 'string' || typeof errorForecast === 'string')) {
+            if (isLoadingWeather === false && (typeof errorGeo === 'string' || typeof errorDarkSky === 'string')) {
                 return (
-                    <ErrorModal errorCurrent={errorCurrent} errorForecast={errorForecast} />
+                    <ErrorModal errorGeo={errorGeo} errorDarkSky={errorDarkSky} />
                 )
             }
         }

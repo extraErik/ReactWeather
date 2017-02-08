@@ -1,4 +1,4 @@
-/* global require module */
+/* global require module process */
 var axios = require('axios');
 
 const OPEN_WEATHER_MAP_CURRENT_URL = 'http://api.openweathermap.org/data/2.5/weather?appid=' + process.env.WEATHER_API_KEY + '&units=imperial';

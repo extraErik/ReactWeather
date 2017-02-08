@@ -11,6 +11,8 @@ import {Weather} from 'Weather';
 //var Weather = require('Weather');
 import {WeatherForm} from 'WeatherForm';
 import {WeatherCurrent} from 'WeatherCurrent';
+import {WeatherForecast} from 'WeatherForecast';
+import {WeatherForecastList} from 'WeatherForecastList';
 import {ErrorModal} from 'ErrorModal';
 
 
@@ -62,7 +64,7 @@ describe('Weather', () => {
         expect(weatherForm).toExist();
     });
 
-    it('should display a WeatherCurrent component if handleSearch makes successful rest call', () => {
+    it('should display WeatherCurrent and WeatherForecastList and WeatherForecast components if handleSearch makes successful rest call', () => {
         var dummyLocation = {'query': {}};
         var myCity = 'Frisco, TX';
 
@@ -99,7 +101,7 @@ describe('Weather', () => {
                         }
                     },
                     {
-                        id: 1,
+                        id: 2,
                         dt: 123415,
                         conditions: 'Stuff, More Stuff',
                         temp: {
@@ -117,6 +119,12 @@ describe('Weather', () => {
 
         var weatherCurrent = TestUtils.findRenderedComponentWithType(weather, WeatherCurrent);
         expect(weatherCurrent).toExist();
+
+        var weatherForecastList = TestUtils.findRenderedComponentWithType(weather, WeatherForecastList);
+        expect(weatherForecastList).toExist();
+
+        var weatherForecast = TestUtils.scryRenderedComponentsWithType(weather, WeatherForecast);
+        expect(weatherForecast.length).toBeGreaterThan(0);
 
         var errorModals = TestUtils.scryRenderedComponentsWithType(weather, ErrorModal);
         expect(errorModals.length).toEqual(0);
