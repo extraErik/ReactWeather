@@ -1,7 +1,8 @@
 /* global require module process */
 var axios = require('axios');
 
-const DARKSKY_PROXY_URL = 'http://localhost:' + process.env.PORT + '/forecast';
+// const DARKSKY_PROXY_URL = 'http://localhost:' + process.env.PORT + '/forecast';
+const DARKSKY_PROXY_URL = '/forecast';
 
 module.exports = {
     getData: function (lat, lng) {
