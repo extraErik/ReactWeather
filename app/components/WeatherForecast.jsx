@@ -10,7 +10,7 @@ export var WeatherForecast = React.createClass({
         var {dt, conditions, iconVal} = dayData;
         var {max, min} = dayData.temp;
 
-        var iconSrc = `/svg/${iconVal}.svg`;
+        var iconSrc = iconVal ? `/svg/${iconVal}.svg` : '';
 
         return (
             <div className="forecast-weather callout clearfix">

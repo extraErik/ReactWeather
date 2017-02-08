@@ -10,7 +10,7 @@ export var WeatherCurrent = React.createClass({
         var {location, current} = this.props;
         var {dt, temp, conditions, iconVal, humidity, pressure, windSpeed, windDir, visibility, sunriseUTC, sunsetUTC} = current;
 
-        var iconSrc = `/svg/${iconVal}.svg`;
+        var iconSrc = iconVal ? `/svg/${iconVal}.svg` : '';
 
         return (
             <div className="current-weather callout clearfix" ref={node => this.node = node}>
