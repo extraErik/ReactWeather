@@ -27,6 +27,7 @@ $title-color: #555;
 
 input[type=search] {
     box-shadow: none;
+    border-radius: 0;
 }
 
 .callout p {
@@ -66,7 +67,7 @@ input[type=search] {
 }
 
 .forecast-weather {
-    
+
     background-color: #B2D9EA;
     background-image: linear-gradient(#B2D9EA, #EDF4F7);
 
