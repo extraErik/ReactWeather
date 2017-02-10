@@ -25,8 +25,8 @@ export var Weather = React.createClass({
     getIconFilename: function (apiName, forecastFlag) {
 
         // Per the DarkSky API FAQ, can treat partly-cloudy-night as aliast for 'clear-day'
-        // due to some confusing logic that they plan to change. My reading indicates this
-        // really only applies to forecast days, not current conditions, hence the flag here.
+        // due to some confusing logic that they plan to change. The way I understand it, I think this
+        // should really only apply to forecast days, not current conditions, hence the flag here.
         if (forecastFlag === true && apiName === 'partly-cloudy-night') {
             apiName = 'clear-day';
         }
@@ -91,7 +91,7 @@ export var Weather = React.createClass({
         this.setState({
             isLoadingWeather: true,
             location: undefined,
-            darkSkyCurrent: {
+            darkSkyCurrent: {           //TODO: do you really need all this? I dont think so.
                 dt: undefined,
                 temp: undefined,
                 conditions: undefined,
@@ -109,11 +109,43 @@ export var Weather = React.createClass({
         });
 
         geocode.getData(location).then(function (httpData) {
+
             var lat = httpData.data.results[0].geometry.location.lat,
                 lng = httpData.data.results[0].geometry.location.lng;
 
+            var address = httpData.data.results[0].address_components;
+            var addrLength = address.length;
+            var lastAddrIndex = addrLength - 1;
+            var displayAddress;
+
+            // TODO: is there ever any more than one item in results array? How, when? Handle if needed.
+
+            if (address[lastAddrIndex].long_name === 'United States') {
+                if (addrLength > 2) {
+                    // e.g. Dallas, TX
+                    displayAddress = address[0].long_name + ', ' + address[lastAddrIndex - 1].short_name;
+                } else if (addrLength === 2) {
+                    // e.g. Texas, United States
+                    displayAddress = address[0].long_name + ', ' + address[lastAddrIndex].long_name;
+                } else if (addrLength === 1) {
+                    // e.g. United States
+                    displayAddress = address[0].long_name
+                } else {
+                    throw Error(`Address data missing for ${location}`);
+                }
+            } else {
+                if (addrLength > 1) {
+                    displayAddress = address[0].long_name + ', ' + address[lastAddrIndex].long_name;
+                } else if (addrLength === 1) {
+                    displayAddress = address[0].long_name;
+                } else {
+                    throw Error(`Address data missing for ${location}`);
+                }
+            }
+
             that.setState({
-                location
+                location,
+                displayAddress
             });
 
             darkSky.getData(lat, lng).then(function (httpData) {
@@ -176,7 +208,7 @@ export var Weather = React.createClass({
         }
     },
     render: function () {
-        var {isLoadingWeather, location, darkSkyCurrent, darkSkyForecast, errorGeo, errorDarkSky} = this.state;
+        var {isLoadingWeather, displayAddress, darkSkyCurrent, darkSkyForecast, errorGeo, errorDarkSky} = this.state;
 
         function renderSpinner () {
             if (isLoadingWeather) {
@@ -185,14 +217,14 @@ export var Weather = React.createClass({
         }
 
         function renderCurrentWeather () {
-            if (location && darkSkyCurrent) {
-                return <WeatherCurrent location={location} current={darkSkyCurrent}/>;
+            if (displayAddress && darkSkyCurrent) {
+                return <WeatherCurrent location={displayAddress} current={darkSkyCurrent}/>;
             }
         }
 
         function renderForecastWeather () {
-            if (location && darkSkyForecast) {
-                return <WeatherForecastList location={location} forecast={darkSkyForecast}/>;
+            if (displayAddress && darkSkyForecast) {
+                return <WeatherForecastList location={displayAddress} forecast={darkSkyForecast}/>;
             }
         }
 
