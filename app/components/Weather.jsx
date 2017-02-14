@@ -8,7 +8,7 @@ import ErrorModal from 'ErrorModal';
 
 var geocode = require('geocode');
 var darkSky = require('darkSky');
-var openWeatherMap = require('openWeatherMap');
+// var openWeatherMap = require('openWeatherMap');
 
 var moment = require('moment-timezone');
 
@@ -101,8 +101,8 @@ export var Weather = React.createClass({
                 windSpeed: undefined,
                 windDeg: undefined,
                 visibility: undefined,
-                sunriseUTC: undefined,
-                sunsetUTC: undefined
+                sunrise: undefined,
+                sunset: undefined
             },
             errorGeo: undefined,
             errorDarkSky: undefined,
@@ -162,8 +162,8 @@ export var Weather = React.createClass({
                         windSpeed: httpData.data.currently.windSpeed.toFixed(1),
                         windDir: that.getWindDirection(httpData.data.currently.windBearing),
                         visibility: httpData.data.currently.visibility,
-                        sunriseUTC: moment.utc(httpData.data.daily.data[0].sunriseTime * 1000).tz(httpData.data.timezone).format('h:mm a z'),
-                        sunsetUTC: moment.utc(httpData.data.daily.data[0].sunsetTime * 1000).tz(httpData.data.timezone).format('h:mm a z')
+                        sunrise: moment.utc(httpData.data.daily.data[0].sunriseTime * 1000).tz(httpData.data.timezone).format('h:mm a z'),
+                        sunset: moment.utc(httpData.data.daily.data[0].sunsetTime * 1000).tz(httpData.data.timezone).format('h:mm a z')
                     },
                     darkSkyForecast: httpData.data.daily.data.map(function(item, index){
                         var processedItem = { dt: undefined, temp: {max: undefined, min: undefined }};

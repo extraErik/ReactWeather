@@ -1,4 +1,4 @@
-/* global require module process */
+/* global require module */
 var axios = require('axios');
 
 const GOOGLE_GEOCODE_URL = 'https://maps.googleapis.com/maps/api/geocode/json';

@@ -51,6 +51,10 @@ module.exports = function (config) {
                       },
                       test: /\.jsx?$/,
                       exclude: /(node_modules|bower_components)/
+                  },
+                  {
+                      loader: 'json-loader',
+                      test: /\.json$/
                   }
                 ],
                 postLoaders: [

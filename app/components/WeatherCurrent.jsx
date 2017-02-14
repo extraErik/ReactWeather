@@ -8,7 +8,7 @@ export var WeatherCurrent = React.createClass({
     },
     render: function () {
         var {location, current} = this.props;
-        var {dt, temp, conditions, iconVal, humidity, pressure, windSpeed, windDir, visibility, sunriseUTC, sunsetUTC} = current;
+        var {dt, temp, conditions, iconVal, humidity, pressure, windSpeed, windDir, visibility, sunrise, sunset} = current;
 
         var iconSrc = iconVal ? `/svg/${iconVal}.svg` : '';
 
@@ -31,8 +31,8 @@ export var WeatherCurrent = React.createClass({
                         <p>Visibility: {visibility} miles</p>
                     </div>
                     <div className="sun float-right">
-                        <p>Sunrise: {sunriseUTC} <span className="tz"></span></p>
-                        <p>Sunset: {sunsetUTC} <span className="tz"></span></p>
+                        <p>Sunrise: {sunrise} <span className="tz"></span></p>
+                        <p>Sunset: {sunset} <span className="tz"></span></p>
                     </div>
                 </div>
                 <a className="float-right" href="https://darksky.net/poweredby/" target="_blank">Powered by DarkSky</a>

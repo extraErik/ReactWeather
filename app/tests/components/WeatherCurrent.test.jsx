@@ -15,17 +15,18 @@ describe('WeatherCurrent', () => {
     });
 
     it('should display all the weather data passed into it', () => {
-        var location = 'Frisco, TX';
+        var location = 'Frisco, TX',
+            displayAddress = 'Frisco, TX';
         var current = {
-            temp: '98.45',
+            temp: '98',
             conditions: 'Cloudy',
             humidity: '38',
             pressure: '1015',
             windSpeed: '5.82',
             windDir: '220',
-            visibility: '16093',
-            sunriseUTC: '12345',
-            sunsetUTC: '12346'
+            visibility: '9.99',
+            sunrise: '6:31am CST',
+            sunset: '7:32pm CST'
         };
 
         var weatherCurrent = TestUtils.renderIntoDocument(<WeatherCurrent location={location} current={current} />);
@@ -33,14 +34,16 @@ describe('WeatherCurrent', () => {
         var $el = $(weatherCurrent.node);
         var actualCurrentWeatherText = $el.text();
 
-        expect(actualCurrentWeatherText).toInclude('Current weather in ' + location);
-        expect(actualCurrentWeatherText).toInclude('Conditions: ' + current.conditions);
-        expect(actualCurrentWeatherText).toInclude('Temperature: ' + current.temp);
-        expect(actualCurrentWeatherText).toInclude('Humidity: ' + current.humidity);
+        expect(actualCurrentWeatherText).toInclude('Currently in ' + displayAddress);
+        expect(actualCurrentWeatherText).toInclude(current.conditions);
+        // expect(actualCurrentWeatherText).toInclude(current.temp + ' &deg;F');
+        expect(actualCurrentWeatherText).toInclude(current.temp);
+        expect(actualCurrentWeatherText).toInclude('Humidity: ' + current.humidity + '%');
+        // expect(actualCurrentWeatherText).toInclude('Pressure: ' + current.pressure + "&quot;Hg");
         expect(actualCurrentWeatherText).toInclude('Pressure: ' + current.pressure);
         expect(actualCurrentWeatherText).toInclude('Wind: ' + current.windSpeed + ' mph, ' + current.windDir);
-        expect(actualCurrentWeatherText).toInclude('Visibility: ' + current.visibility);
-        expect(actualCurrentWeatherText).toInclude('Sunrise: ' + current.sunriseUTC);
-        expect(actualCurrentWeatherText).toInclude('Sunset: ' + current.sunsetUTC);
+        expect(actualCurrentWeatherText).toInclude('Visibility: ' + current.visibility + ' miles');
+        expect(actualCurrentWeatherText).toInclude('Sunrise: ' + current.sunrise);
+        expect(actualCurrentWeatherText).toInclude('Sunset: ' + current.sunset);
     });
 });

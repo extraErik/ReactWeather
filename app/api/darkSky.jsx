@@ -1,4 +1,4 @@
-/* global require module process */
+/* global require module */
 var axios = require('axios');
 
 // const DARKSKY_PROXY_URL = 'http://localhost:' + process.env.PORT + '/forecast';

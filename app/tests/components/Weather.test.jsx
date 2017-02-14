@@ -73,28 +73,29 @@ describe('Weather', () => {
         var spy = expect.spyOn(weather, 'handleSearch').andCall(function (location) {
 
             weather.setState({
-                // fake current data
-                isLoadingCurrent: false,
+                // fake data
+                isLoadingWeather: false,
                 location: location,
-                current: {
+                displayAddress: 'Frisco, TX',
+                darkSkyCurrent: {
                     dt: 123467,
                     temp: 59.34,
                     conditions: 'Clear',
                     humidity: 82,
+                    iconVal: 'Sun',
                     pressure: '29.85',
                     windSpeed: 11.41,
                     windDir: 'W',
                     visibility: '10.0',
-                    sunriseUTC: '1:31 pm',
-                    sunsetUTC: '11:32 pm'
+                    sunrise: '7:31 am CST',
+                    sunset: '6:32 pm CST'
                 },
-                // fake the forecast data
-                isLoadingForecast: false,
-                forecast: [
+                darkSkyForecast: [
                     {
                         id: 1,
                         dt: 123412,
                         conditions: 'Stuff, Other Stuff',
+                        iconVal: 'Sun',
                         temp: {
                             max: 3,
                             min: 2
@@ -104,6 +105,7 @@ describe('Weather', () => {
                         id: 2,
                         dt: 123415,
                         conditions: 'Stuff, More Stuff',
+                        iconVal: 'Sun',
                         temp: {
                             max: 23,
                             min: 12
@@ -139,10 +141,8 @@ describe('Weather', () => {
 
         var spy = expect.spyOn(weather, 'handleSearch').andCall(function () {
             weather.setState({
-                errorCurrent: 'nope',
-                errorForecast: 'nope',
-                isLoadingCurrent: false,
-                isLoadingForecast: false
+                errorDarkSky: 'you have failed',
+                isLoadingWeather: false,
             });
         });
 
@@ -170,7 +170,7 @@ describe('Weather', () => {
         var spy = expect.spyOn(weather, 'handleSearch').andCall(function () {
 
             weather.setState({
-                isLoadingCurrent: true
+                isLoadingWeather: true
             });
 
             var weatherComponentText = $el.text();
@@ -179,8 +179,8 @@ describe('Weather', () => {
             setTimeout(function() {
 
                 weather.setState({
-                    errorMessage: 'nope',
-                    isLoadingCurrent: false
+                    errorDarkSky: 'you have failed',
+                    isLoadingWeather: false
                 });
 
                 var weatherComponentText = $el.text();

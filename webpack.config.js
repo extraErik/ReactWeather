@@ -64,8 +64,6 @@ module.exports = {
                 loader: 'json-loader',
                 test: /\.json$/
             }
-
-
         ]
     },
     sassLoader: {
