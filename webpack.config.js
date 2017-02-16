@@ -32,6 +32,11 @@ module.exports = {
                 DARKSKY_API_KEY: JSON.stringify(process.env.DARKSKY_API_KEY)
             }
         }),
+        new webpack.optimize.UglifyJsPlugin({
+            compressor: {
+                warnings: false
+            }
+        })
     ],
     output: {
         path: __dirname,

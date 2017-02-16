@@ -157,7 +157,7 @@ describe('Weather', () => {
         expect(errorModal).toExist();
     });
 
-    it('should display a busy message while waiting for getCurrent rest call to return', (done) => {
+    it('should display a busy message while waiting for geocode and weather rest calls to return', (done) => {
         var dummyLocation = {'query': {}};
         var myCity = 'yabbadabbadoo';
 
@@ -196,10 +196,6 @@ describe('Weather', () => {
 
         expect(spy).toHaveBeenCalledWith(myCity);
 
-    });
-
-    //TODO: this might go away if you chain promises and have just one busy message for both calls...
-    xit('should display a busy message while waiting for getForecast rest call to return', () => {
     });
 
 });

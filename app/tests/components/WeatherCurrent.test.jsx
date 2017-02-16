@@ -36,11 +36,9 @@ describe('WeatherCurrent', () => {
 
         expect(actualCurrentWeatherText).toInclude('Currently in ' + displayAddress);
         expect(actualCurrentWeatherText).toInclude(current.conditions);
-        // expect(actualCurrentWeatherText).toInclude(current.temp + ' &deg;F');
-        expect(actualCurrentWeatherText).toInclude(current.temp);
+        expect(actualCurrentWeatherText).toInclude(current.temp + ' ' + String.fromCharCode(176) + 'F');
         expect(actualCurrentWeatherText).toInclude('Humidity: ' + current.humidity + '%');
-        // expect(actualCurrentWeatherText).toInclude('Pressure: ' + current.pressure + "&quot;Hg");
-        expect(actualCurrentWeatherText).toInclude('Pressure: ' + current.pressure);
+        expect(actualCurrentWeatherText).toInclude('Pressure: ' + current.pressure + ' ' + String.fromCharCode(34) + 'Hg');
         expect(actualCurrentWeatherText).toInclude('Wind: ' + current.windSpeed + ' mph, ' + current.windDir);
         expect(actualCurrentWeatherText).toInclude('Visibility: ' + current.visibility + ' miles');
         expect(actualCurrentWeatherText).toInclude('Sunrise: ' + current.sunrise);
