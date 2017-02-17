@@ -1,0 +1,48 @@
+.current-weather.callout p {
+    margin-bottom: 0.1rem;
+}
+
+.current-weather-icon {
+    height: 200px;
+    width: 200px;
+}
+
+.current-weather {
+
+    background-color: #B2D9EA;
+    background-image: linear-gradient(#B2D9EA, #EDF4F7);
+
+    .cond-and-temp {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        p {
+            margin-bottom: 0.5rem;
+        }
+    }
+    .cond {
+        font-size: 2.5rem;
+        line-height: 1;
+    }
+    .temp {
+        font-size: 3.5rem;
+        line-height: 1;
+    }
+    .condImg {
+        display: block;
+        width: 50%;
+        i.wi {
+            display: block;
+            font-size: 8rem;
+            text-align: center;
+        }
+
+    }
+}
+
+.current-weather>:first-child {
+    margin-bottom: 0;
+}
+
+.current-weather {
+    margin-top: 2.5rem;
+}

@@ -21,7 +21,9 @@ export var WeatherForecastList = React.createClass({
         return (
             <div className="forecast-weather-list callout">
                 <h4 className="forecast-weather-heading">Forecast for {location}</h4>
-                {renderForecast()}
+                <div className="row small-collapse medium-uncollapse">
+                    {renderForecast()}
+                </div>
             </div>
         )
     }

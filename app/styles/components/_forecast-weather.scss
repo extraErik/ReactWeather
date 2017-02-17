@@ -1,0 +1,32 @@
+
+.forecast-weather-icon {
+    height: 150px;
+    width: 150px;
+}
+
+.forecast-weather {
+
+    background-color: #B2D9EA;
+    background-image: linear-gradient(#B2D9EA, #EDF4F7);
+
+    padding: 1rem;
+
+    p {
+        margin-bottom: 0.1rem;
+    }
+
+    .condImg {
+        display: block;
+        width: 50%;
+        /*i.wi {
+            display: block;
+            font-size: 5rem;
+            margin-top: 1rem;
+            text-align: center;
+        }*/
+    }
+}
+
+.forecast-weather-list {
+    margin-top: 2.5rem;
+}

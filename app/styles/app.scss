@@ -1,97 +1,13 @@
-$space-large: 2.5rem;
-$title-color: #555;
+@import "base/variables";
 
-/* weather icons */
-@font-face {
-  font-family: 'WeatherIcons';
-  src: url('/fonts/weathericons-regular-webfont.eot#iefix') format('embedded-opentype'),
-       url('/fonts/weathericons-regular-webfont.woff') format('woff'),
-       url('/fonts/weathericons-regular-webfont.ttf') format('truetype'),
-       url('/fonts/weathericons-regular-webfont.svg') format('svg');
-}
+// foundation
+@import "base/foundation-settings";
+@import "foundation";
+@include foundation-everything(true);  // true = enable flexbox mode
 
-.current-weather-icon {
-    height: 200px;
-    width: 200px;
-}
-.forecast-weather-icon {
-    height: 150px;
-    width: 150px;
-}
-
-.page-title {
-    color: $title-color;
-    margin-top: $space-large;
-    margin-bottom: $space-large;
-}
-
-input[type=search] {
-    box-shadow: none;
-    border-radius: 0;
-    -webkit-appearance: none;
-}
-
-.callout p {
-    margin-bottom: 0.1rem;
-}
-
-.current-weather {
-
-    background-color: #B2D9EA;
-    background-image: linear-gradient(#B2D9EA, #EDF4F7);
-
-    .cond-and-temp {
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-        p {
-            margin-bottom: 0.5rem;
-        }
-    }
-    .cond {
-        font-size: 2.5rem;
-        line-height: 1;
-    }
-    .temp {
-        font-size: 3.5rem;
-        line-height: 1;
-    }
-    .condImg {
-        display: block;
-        width: 50%;
-        i.wi {
-            display: block;
-            font-size: 8rem;
-            text-align: center;
-        }
-
-    }
-}
-
-.forecast-weather {
-
-    background-color: #B2D9EA;
-    background-image: linear-gradient(#B2D9EA, #EDF4F7);
-
-    .condImg {
-        display: block;
-        width: 50%;
-        i.wi {
-            display: block;
-            font-size: 5rem;
-            margin-top: 1rem;
-            text-align: center;
-        }
-    }
-}
-
-.current-weather>:first-child {
-    margin-bottom: 0;
-}
-
-.current-weather, .forecast-weather-list {
-    margin-top: 2.5rem;
-}
-
-.forecast-weather.callout {
-    margin-top: 1rem;
-}
+// Components
+@import "components/weather";
+@import "components/weather-form";
+@import "components/current-weather";
+/* @import "components/forecast-weather-list"; */
+@import "components/forecast-weather";
