@@ -1,4 +1,4 @@
-/* global require describe it xit setTimeout */
+/* global require describe it setTimeout */
 var React = require('react');
 //var ReactDOM = require('react-dom');
 //var {Provider} = require('react-redux');

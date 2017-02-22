@@ -125,7 +125,7 @@ export var Weather = React.createClass({
                     adminArea1 = { short: addrComponent.short_name, long: addrComponent.long_name };
                 } else if (addrComponent.types.includes('country')) {
                     country = { short: addrComponent.short_name, long: addrComponent.long_name };
-                };
+                }
             });
 
             if (locality) {
@@ -135,7 +135,6 @@ export var Weather = React.createClass({
                         displayAddress += ', ' + adminArea1.short;
                     } else {
                         displayAddress += ', ' + country.long;
-                        console.warn('Only country found for given location: ' + location);
                     }
                 } else {
                     throw Error(`Address data missing for ${location}`);
@@ -145,7 +144,6 @@ export var Weather = React.createClass({
                     displayAddress = adminArea1.long + ', ' + country.long;
                 } else if (country) {
                     displayAddress = country.long;
-                    console.warn('Only country found for given location: ' + location);
                 } else {
                     throw Error(`Address data missing for ${location}`);
                 }
