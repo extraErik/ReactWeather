@@ -114,30 +114,38 @@ export var Weather = React.createClass({
                 lng = httpData.data.results[0].geometry.location.lng;
 
             var address = httpData.data.results[0].address_components;
-            var addrLength = address.length;
-            var lastAddrIndex = addrLength - 1;
-            var displayAddress;
+            var locality, adminArea1, country, displayAddress;
 
             // TODO: is there ever any more than one item in results array? How, when? Handle if needed.
 
-            if (address[lastAddrIndex].long_name === 'United States') {
-                if (addrLength > 2) {
-                    // e.g. Dallas, TX
-                    displayAddress = address[0].long_name + ', ' + address[lastAddrIndex - 1].short_name;
-                } else if (addrLength === 2) {
-                    // e.g. Texas, United States
-                    displayAddress = address[0].long_name + ', ' + address[lastAddrIndex].long_name;
-                } else if (addrLength === 1) {
-                    // e.g. United States
-                    displayAddress = address[0].long_name
+            address.forEach(function (addrComponent) {
+                if (addrComponent.types.includes('locality')) {
+                    locality = { short: addrComponent.short_name, long: addrComponent.long_name };
+                } else if (addrComponent.types.includes('administrative_area_level_1')) {
+                    adminArea1 = { short: addrComponent.short_name, long: addrComponent.long_name };
+                } else if (addrComponent.types.includes('country')) {
+                    country = { short: addrComponent.short_name, long: addrComponent.long_name };
+                };
+            });
+
+            if (locality) {
+                displayAddress = locality.long;
+                if (country) {
+                    if (country.long === 'United States' && adminArea1) {
+                        displayAddress += ', ' + adminArea1.short;
+                    } else {
+                        displayAddress += ', ' + country.long;
+                        console.warn('Only country found for given location: ' + location);
+                    }
                 } else {
                     throw Error(`Address data missing for ${location}`);
                 }
             } else {
-                if (addrLength > 1) {
-                    displayAddress = address[0].long_name + ', ' + address[lastAddrIndex].long_name;
-                } else if (addrLength === 1) {
-                    displayAddress = address[0].long_name;
+                if (adminArea1 && country) {
+                    displayAddress = adminArea1.long + ', ' + country.long;
+                } else if (country) {
+                    displayAddress = country.long;
+                    console.warn('Only country found for given location: ' + location);
                 } else {
                     throw Error(`Address data missing for ${location}`);
                 }
